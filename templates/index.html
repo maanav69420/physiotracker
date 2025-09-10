@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h2>Dashboard Overview</h2>
+            <p>Real-time inventory monitoring for physiotherapy equipment</p>
+        </div>
+        <button class="btn-primary">
+            <i class="fa fa-plus"></i> Add Item
+        </button>
+    </div>
+    
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-number">15</div>
+            <div class="stat-label">Total Items</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Low Stock</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Recently Used</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Available</div>
+        </div>
+    </div>
+
+    <div class="inventory-section">
+        <div class="section-header">
+            <h3>Current Inventory</h3>
+            <div class="section-controls">
+                <select class="filter-select">
+                    <option>All Locations</option>
+                    <option>Room 101</option>
+                    <option>Room 102</option>
+                    <option>Room 103</option>
+                </select>
+                <button class="btn-secondary">
+                    <i class="fa fa-download"></i> Export
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Location</th>
+                        <th>Last Used</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>item001</td>
+                        <td>Resistance Band</td>
+                        <td><span class="quantity-normal">10</span></td>
+                        <td>Room 101</td>
+                        <td>2025-08-18</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Edit"><i class="fa fa-edit"></i></button>
+                            <button class="btn-icon" title="Delete"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>item002</td>
+                        <td>Exercise Ball</td>
+                        <td><span class="quantity-low">5</span></td>
+                        <td>Room 102</td>
+                        <td>2025-08-17</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Edit"><i class="fa fa-edit"></i></button>
+                            <button class="btn-icon" title="Delete"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>item003</td>
+                        <td>Foam Roller</td>
+                        <td><span class="quantity-normal">7</span></td>
+                        <td>Room 103</td>
+                        <td>2025-08-16</td>
+                        <td class="actions">
+                            <button class="btn-icon" title="Edit"><i class="fa fa-edit"></i></button>
+                            <button class="btn-icon" title="Delete"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
