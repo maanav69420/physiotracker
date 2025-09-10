@@ -1,0 +1,31 @@
+<header>
+    <div class="nav-section">
+        <h1>PhysioTracker</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Dashboard</a>
+            <a href="{{ url_for('report') }}">Reports</a>
+        </nav>
+    </div>
+    
+    <div class="search-section">
+        <form class="search-form" action="#" method="get">
+            <input type="text" placeholder="Search inventory..." name="q">
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+    </div>
+    
+    <div class="profile-section">
+        <div class="profile-dropdown">
+            <button class="profile-btn">
+                <i class="fa fa-user-circle"></i>
+                <span>Profile</span>
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="#">Settings</a>
+                <a href="#">Account</a>
+                <a href="{{ url_for('login') }}">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>

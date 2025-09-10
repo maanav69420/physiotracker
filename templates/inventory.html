@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Inventory List</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Location</th>
+            <th>Last Used</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>item001</td>
+            <td>Resistance Band</td>
+            <td>10</td>
+            <td>Room 101</td>
+            <td>2025-08-18</td>
+        </tr>
+        <tr>
+            <td>item002</td>
+            <td>Exercise Ball</td>
+            <td>5</td>
+            <td>Room 102</td>
+            <td>2025-08-17</td>
+        </tr>
+        <tr>
+            <td>item003</td>
+            <td>Foam Roller</td>
+            <td>7</td>
+            <td>Room 103</td>
+            <td>2025-08-16</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
