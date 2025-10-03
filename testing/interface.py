@@ -1,111 +1,88 @@
+# interface.py
 import database
 
 
 def Home(db, cursor):
     while True:
-        print()
-        print(f'{"-"*10} Welcome to our portal {"-"*10}')
-        print(
-            '''Choose your options
-            1. Admin access
-            2. Staff access
-            3. Exit'''
-        )
-        
-        counter = int(input("Enter your choice: "))
-        if counter == 1:
+        print("\n" + "-"*10 + " Welcome to our portal " + "-"*10)
+        print("1. Admin access\n2. Staff access\n3. Exit")
+        choice = int(input("Enter your choice: "))
+
+        if choice == 1:
             admin_access(db, cursor)
-        elif counter == 2:
+        elif choice == 2:
             staff_access(db, cursor)
-        elif counter == 3:
-            break 
+        elif choice == 3:
+            break
         else:
-            print("Invalid Command") 
+            print("Invalid choice.")
 
 
+# ================= ADMIN ACCESS =================
 def admin_access(db, cursor):
     while True:
-        print()
-        print(f'{"-"*10} Admin Access {"-"*10}')
-        print("1. Enter your details\n2. Exit")
-        counter = int(input("Enter choice: "))
-        if counter == 1:    
-            mail , pswd = take_info()
-            if database.validate_admin(cursor, mail):
+        print("\n" + "-"*10 + " Admin Access " + "-"*10)
+        print("1. Login\n2. Register as Admin\n3. Exit")
+        choice = int(input("Enter choice: "))
+
+        if choice == 1:
+            email, pswd = take_info()
+            if database.login_admin(cursor, email, pswd):
                 admin_menu(db, cursor)
             else:
-                print("Access Denied: Not an admin.")
-        if counter == 2:    
-            return                
-        else:   
-            print("Invalid Command")
+                print("❌ Invalid credentials.")
+        elif choice == 2:
+            database.register_admin(db, cursor)
+        elif choice == 3:
+            return
+        else:
+            print("Invalid choice.")
 
 
+# ================= STAFF ACCESS =================
 def staff_access(db, cursor):
     while True:
-        print()
-        print(f'{"-"*10} Staff Access {"-"*10}')
-        print("1. Enter your details\n2. Exit")
-        counter = int(input("Enter choice: "))
-        if counter == 1:    
-            mail , pswd = take_info()
-            if database.validate_staff(cursor, mail):
-                staff_menu(db, cursor, mail)
+        print("\n" + "-"*10 + " Staff Access " + "-"*10)
+        print("1. Login\n2. Register as Staff\n3. Exit")
+        choice = int(input("Enter choice: "))
+
+        if choice == 1:
+            email, pswd = take_info()
+            if database.login_staff(cursor, email, pswd):
+                staff_menu(email)
             else:
-                print("Access Denied: Invalid staff info.")
-        if counter == 2:    
-            return                
-        else:   
-            print("Invalid Command")
-
-
-def take_info():
-    email = str(input("Enter your EmailID:\t"))
-    pswd = str(input("Enter your Password:\t"))
-    return email , pswd
+                print("❌ Invalid credentials.")
+        elif choice == 2:
+            database.register_staff(db, cursor)
+        elif choice == 3:
+            return
+        else:
+            print("Invalid choice.")
 
 
 # ================= ADMIN MENU =================
 def admin_menu(db, cursor):
     while True:
-        print(f'{"-"*10} Admin Operations {"-"*10}')
-        print('''
-            1. Add record
-            2. Update record
-            3. Delete record
-            4. Display all staff
-            5. Exit
-        ''')
+        print("\n" + "-"*10 + " Admin Operations " + "-"*10)
+        print("1. Update staff department\n2. Update staff role\n3. Delete staff\n4. Display staff\n5. Exit")
         choice = int(input("Enter choice: "))
 
         if choice == 1:
-            table = input("Enter table name (info/department/role): ")
-            if table == "info":
-                name = input("Name: "); email = input("Email: ")
-                database.add_record(db, cursor, table, (name, email))
-            elif table == "department":
-                name = input("Name: "); dept = input("Department: ")
-                database.add_record(db, cursor, table, (name, dept))
-            elif table == "role":
-                name = input("Name: "); rolw = input("Role: ")
-                database.add_record(db, cursor, table, (name, rolw))
-
+            email = input("Enter staff email: ")
+            dept = input("Enter new department: ")
+            database.update_staff_department(db, cursor, email, dept)
         elif choice == 2:
-            table = input("Enter table (info/department/role): ")
-            name = input("Name to update: ")
-            new_value = input("New value: ")
-            database.update_record(db, cursor, table, name, new_value)
-
+            email = input("Enter staff email: ")
+            role = input("Enter new role: ")
+            database.update_staff_role(db, cursor, email, role)
         elif choice == 3:
-            table = input("Enter table (info/department/role): ")
-            name = input("Name to delete: ")
-            database.delete_record(db, cursor, table, name)
-
+            email = input("Enter staff email to delete: ")
+            database.delete_staff(db, cursor, email)
         elif choice == 4:
             rows = database.display_staff(cursor)
+            print("\n--- Staff List ---")
             for row in rows:
                 print(row)
-
         elif choice == 5:
             break
         else:
@@ -113,45 +90,16 @@ def admin_menu(db, cursor):
 
 
 # ================= STAFF MENU =================
-def staff_menu(db, cursor, email):
-    result = database.get_staff_info(cursor, email)
-    if not result:
-        print("No department/role assigned.")
-        return
-    dept, rolw = result
+def staff_menu(email):
+    print(f"\n✅ Welcome Staff: {email}")
+    print("You have limited access.\n")
 
-    while True:
-        print(f'{"-"*10} Staff Operations {"-"*10}')
-        print("1. View my items\n2. Add item\n3. Delete item\n4. Exit")
-        choice = int(input("Enter choice: "))
 
-        if choice == 1:
-            rows = database.get_items(cursor, dept, rolw)
-            for row in rows:
-                print(row)
-
-        elif choice == 2:
-            print("\nAvailable items in database:")
-            items = database.list_all_items(cursor)
-            if items:
-                for i, it in enumerate(items, 1):
-                    print(f"{i}. {it}")
-            else:
-                print("No items exist yet. You may create a new one.")
-
-            item = input("Enter item name (choose existing or type new): ").strip()
-            qty = int(input("Enter quantity (max 10): "))
-
-            database.add_or_update_item(db, cursor, dept, rolw, item, qty)
-
-        elif choice == 3:
-            item = input("Enter item to delete: ")
-            database.delete_item(db, cursor, dept, rolw, item)
-
-        elif choice == 4:
-            break
-        else:
-            print("Invalid choice.")
+# ================= HELPERS =================
+def take_info():
+    email = input("Enter your EmailID: ")
+    pswd = input("Enter your Password: ")
+    return email, pswd
 
 
 # ================= START APP =================
