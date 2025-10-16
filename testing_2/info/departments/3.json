@@ -1,0 +1,44 @@
+{
+    "excerice tolerance and fitness lab": {
+        "TMT Unit": {
+            "default": 1,
+            "current": 1
+        },
+        "Bicycle Ergometer": {
+            "default": 1,
+            "current": 1
+        },
+        "Skin Fold Calipers": {
+            "default": 1,
+            "current": 1
+        },
+        "Weighing Scale": {
+            "default": 1,
+            "current": 1
+        },
+        "Spirometer": {
+            "default": 1,
+            "current": 1
+        },
+        "Pulse Oximeter": {
+            "default": 1,
+            "current": 1
+        },
+        "Body Composition Kit": {
+            "default": 1,
+            "current": 1
+        },
+        "Dynamometer": {
+            "default": 1,
+            "current": 1
+        },
+        "Hand Evaluation Kit": {
+            "default": 1,
+            "current": 1
+        },
+        "leg extensions": {
+            "default": 3,
+            "current": 5
+        }
+    }
+}

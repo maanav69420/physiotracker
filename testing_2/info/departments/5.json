@@ -1,0 +1,84 @@
+{
+    "electrotherapy lab": {
+        "Diagnostic Electrical Stimulator": {
+            "default": 1,
+            "current": 1
+        },
+        "Diagnostic Electric Stimulator": {
+            "default": 1,
+            "current": 1
+        },
+        "Biofeedback Unit": {
+            "default": 1,
+            "current": 1
+        },
+        "E.M.G./NCV/EP Unit": {
+            "default": 1,
+            "current": 1
+        },
+        "Hydrocollator pack unit": {
+            "default": 1,
+            "current": 1
+        },
+        "Paraffin wax bath": {
+            "default": 1,
+            "current": 1
+        },
+        "SWD-500 Watts": {
+            "default": 1,
+            "current": 1
+        },
+        "Microwave diathermy": {
+            "default": 1,
+            "current": 1
+        },
+        "IFT": {
+            "default": 1,
+            "current": 1
+        },
+        "T.E.N.S": {
+            "default": 1,
+            "current": 1
+        },
+        "Ultrasound Therapy Unit": {
+            "default": 1,
+            "current": 1
+        },
+        "Electronic Traction unit": {
+            "default": 1,
+            "current": 1
+        },
+        "Whirlpool Bath": {
+            "default": 1,
+            "current": 1
+        },
+        "Contrast Bath": {
+            "default": 1,
+            "current": 1
+        },
+        "UVR Lamp": {
+            "default": 1,
+            "current": 1
+        },
+        "IRR Lamp": {
+            "default": 1,
+            "current": 1
+        },
+        "Laser Therapy Unit": {
+            "default": 1,
+            "current": 1
+        },
+        "CPM U/L": {
+            "default": 1,
+            "current": 1
+        },
+        "CPM L/L": {
+            "default": 1,
+            "current": 1
+        },
+        "Cryotherapy Unit": {
+            "default": 1,
+            "current": 1
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "department": [
+        "excercise therapy lab",
+        "anatomy lab",
+        "excerice tolerance and fitness lab",
+        "biomechanics and kinesiology lab",
+        "electrotherapy lab"
+    ],
+    "roles": [
+        "head",
+        "lab assistant",
+        "co lab assistant"
+    ]
+}
