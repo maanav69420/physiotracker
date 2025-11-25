@@ -1,38 +1,229 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Inventory List</h2>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Item Name</th>
-            <th>Quantity</th>
-            <th>Location</th>
-            <th>Last Used</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>item001</td>
-            <td>Resistance Band</td>
-            <td>10</td>
-            <td>Room 101</td>
-            <td>2025-08-18</td>
-        </tr>
-        <tr>
-            <td>item002</td>
-            <td>Exercise Ball</td>
-            <td>5</td>
-            <td>Room 102</td>
-            <td>2025-08-17</td>
-        </tr>
-        <tr>
-            <td>item003</td>
-            <td>Foam Roller</td>
-            <td>7</td>
-            <td>Room 103</td>
-            <td>2025-08-16</td>
-        </tr>
-    </tbody>
-</table>
+<div class="inventory-page">
+    <div class="page-header">
+        <div>
+            <h2>Inventory Management</h2>
+            <p>Manage all physiotherapy equipment</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-secondary" onclick="location.href='/api/docs'">
+                <i class="fas fa-code"></i> API Docs
+            </button>
+            <button class="btn-primary" onclick="openAddItemModal()">
+                <i class="fas fa-plus"></i> Add Item
+            </button>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="filters-section">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search items..." onkeyup="searchItems()">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="filter-controls">
+            <select id="status-filter" onchange="filterByStatus(this.value)">
+                <option value="all">All Status</option>
+                <option value="available">Available</option>
+                <option value="reserved">Reserved</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="low-stock">Low Stock</option>
+                <option value="out-of-order">Out of Order</option>
+            </select>
+            <select id="dept-filter" onchange="filterByDepartment(this.value)">
+                <option value="all">All Departments</option>
+                <!-- Populated dynamically -->
+            </select>
+        </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="table-container">
+        <div class="loading-spinner" id="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i> Loading inventory...
+        </div>
+        <table class="inventory-table" id="inventory-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Department</th>
+                    <th>Quantity</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Last Used</th>
+                    <th>Usage Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-tbody">
+                <!-- Data loaded dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Same modals as index.html -->
+<!-- Add Item Modal -->
+<div id="add-item-modal" class="modal">
+    <!-- Same content as index.html -->
+</div>
+
+<!-- Edit Item Modal -->
+<div id="edit-item-modal" class="modal">
+    <!-- Same content as index.html -->
+</div>
+
+<script>
+// Use similar JavaScript as index.html, but focused on inventory management
+let allItems = [];
+let filteredItems = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadInventoryData();
+    loadDepartments();
+});
+
+async function loadInventoryData() {
+    try {
+        const response = await fetch('/api/items');
+        const items = await response.json();
+        
+        allItems = items;
+        filteredItems = items;
+        displayInventoryItems(items);
+        
+    } catch (error) {
+        console.error('Error loading inventory:', error);
+        showError('Failed to load inventory data');
+    }
+}
+
+function displayInventoryItems(items) {
+    const tbody = document.getElementById('inventory-tbody');
+    const table = document.getElementById('inventory-table');
+    const spinner = document.getElementById('loading-spinner');
+    
+    tbody.innerHTML = '';
+    
+    if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="text-center">No items found</td></tr>';
+    } else {
+        items.forEach(item => {
+            const row = createInventoryRow(item);
+            tbody.appendChild(row);
+        });
+    }
+    
+    spinner.style.display = 'none';
+    table.style.display = 'table';
+}
+
+function createInventoryRow(item) {
+    const row = document.createElement('tr');
+    const statusClass = item.status.replace('_', '-');
+    
+    row.innerHTML = `
+        <td><code>${item.id}</code></td>
+        <td><strong>${item.name}</strong></td>
+        <td>${item.description || 'No description'}</td>
+        <td><span class="dept-badge">${formatDepartmentName(item.department)}</span></td>
+        <td><span class="${item.quantity <= (item.min_stock_level || 5) ? 'quantity-low' : 'quantity-normal'}">${item.quantity}</span></td>
+        <td>${item.location}</td>
+        <td><span class="status ${statusClass}">${formatStatus(item.status)}</span></td>
+        <td>${formatDate(item.last_used)}</td>
+        <td>${item.usage_count || 0}</td>
+        <td class="actions">
+            <button class="btn-icon" onclick="editItem('${item.id}')" title="Edit">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon btn-danger" onclick="confirmDeleteItem('${item.id}')" title="Delete">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    `;
+    
+    return row;
+}
+
+async function searchItems() {
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    
+    if (query === '') {
+        filteredItems = allItems;
+        displayInventoryItems(filteredItems);
+        return;
+    }
+    
+    try {
+        // Change this URL:
+        const response = await fetch(`/api/utils/search?q=${encodeURIComponent(query)}`);
+        const items = await response.json();
+        
+        filteredItems = items;
+        displayInventoryItems(filteredItems);
+        
+    } catch (error) {
+        console.error('Search error:', error);
+        // Fallback to client-side search
+    }
+}
+
+function filterByStatus(status) {
+    let items = allItems;
+    
+    if (status !== 'all') {
+        if (status === 'low-stock') {
+            items = items.filter(item => item.quantity <= (item.min_stock_level || 5));
+        } else {
+            items = items.filter(item => item.status === status);
+        }
+    }
+    
+    filteredItems = items;
+    displayInventoryItems(filteredItems);
+}
+
+function filterByDepartment(dept) {
+    let items = allItems;
+    
+    if (dept !== 'all') {
+        items = items.filter(item => item.department === dept);
+    }
+    
+    filteredItems = items;
+    displayInventoryItems(filteredItems);
+}
+
+async function confirmDeleteItem(itemId) {
+    if (confirm(`Are you sure you want to delete item ${itemId}? This action cannot be undone.`)) {
+        await deleteItemById(itemId);
+    }
+}
+
+async function deleteItemById(itemId) {
+    try {
+        const response = await fetch(`/api/items/${itemId}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess(result.message);
+            loadInventoryData(); // Refresh data
+        } else {
+            showError(result.message);
+        }
+        
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        showError('Failed to delete item');
+    }
+}
+
+// Include other functions from index.html (editItem, addItem, etc.)
+</script>
 {% endblock %}

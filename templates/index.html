@@ -1,95 +1,105 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="dashboard">
-    <div class="dashboard-header">
-        <div class="header-content">
-            <h2>Dashboard Overview</h2>
-            <p>Real-time inventory monitoring for physiotherapy equipment</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Page Header -->
+    <div class="flex justify-between items-start mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <p class="mt-2 text-gray-600 dark:text-gray-400">Inventory monitoring for physiotherapy equipment</p>
         </div>
-        <button class="btn-primary">
-            <i class="fa fa-plus"></i> Add Item
+        <button onclick="openAddItemModal()" 
+                class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+            <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+            Add Item
         </button>
     </div>
-    
-    <div class="stats-section">
-        <div class="stat-card">
-            <div class="stat-number">15</div>
-            <div class="stat-label">Total Items</div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- Total Items -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer" 
+             onclick="filterByStatus('total')">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-500 rounded-lg">
+                    <i data-lucide="package" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Items</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="total-items">0</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-500">Live data</p>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">3</div>
-            <div class="stat-label">Low Stock</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">2</div>
-            <div class="stat-label">Recently Used</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">8</div>
-            <div class="stat-label">Available</div>
+
+        <!-- Reserved -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer" 
+             onclick="filterByStatus('reserved')">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-500 rounded-lg">
+                    <i data-lucide="calendar-check" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Reserved</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="reserved-count">0</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-500">Today</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="inventory-section">
-        <div class="section-header">
-            <h3>Current Inventory</h3>
-            <div class="section-controls">
-                <select class="filter-select">
-                    <option>All Locations</option>
-                    <option>Room 101</option>
-                    <option>Room 102</option>
-                    <option>Room 103</option>
-                </select>
-                <button class="btn-secondary">
-                    <i class="fa fa-download"></i> Export
-                </button>
+    <!-- Inventory Table -->
+    <div class="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+        <!-- Table Header -->
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900/50">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Current Inventory</h3>
+                <div class="flex items-center space-x-4">
+                    <!-- Filters -->
+                    <div class="flex items-center space-x-3">
+                        <select id="dept-filter" 
+                                onchange="filterByDept(this.value)"
+                                class="text-sm border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                            <option value="all">All Departments</option>
+                        </select>
+                        
+                        <select id="status-filter" 
+                                onchange="filterByStatus(this.value)"
+                                class="text-sm border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                            <option value="all">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="reserved">Reserved</option>
+                            <option value="maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                    
+                    
+                </div>
             </div>
         </div>
-        
-        <div class="table-container">
-            <table class="inventory-table">
-                <thead>
+
+        <!-- Table -->
+        <div class="overflow-x-auto custom-scrollbar">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                <thead class="bg-gray-50 dark:bg-slate-900/50">
                     <tr>
-                        <th>ID</th>
-                        <th>Item Name</th>
-                        <th>Quantity</th>
-                        <th>Location</th>
-                        <th>Last Used</th>
-                        <th>Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Item Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Department</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Quantity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Location</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>item001</td>
-                        <td>Resistance Band</td>
-                        <td><span class="quantity-normal">10</span></td>
-                        <td>Room 101</td>
-                        <td>2025-08-18</td>
-                        <td class="actions">
-                            <button class="btn-icon" title="Edit"><i class="fa fa-edit"></i></button>
-                            <button class="btn-icon" title="Delete"><i class="fa fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>item002</td>
-                        <td>Exercise Ball</td>
-                        <td><span class="quantity-low">5</span></td>
-                        <td>Room 102</td>
-                        <td>2025-08-17</td>
-                        <td class="actions">
-                            <button class="btn-icon" title="Edit"><i class="fa fa-edit"></i></button>
-                            <button class="btn-icon" title="Delete"><i class="fa fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>item003</td>
-                        <td>Foam Roller</td>
-                        <td><span class="quantity-normal">7</span></td>
-                        <td>Room 103</td>
-                        <td>2025-08-16</td>
-                        <td class="actions">
-                            <button class="btn-icon" title="Edit"><i class="fa fa-edit"></i></button>
-                            <button class="btn-icon" title="Delete"><i class="fa fa-trash"></i></button>
+                <tbody id="inventory-table-body" class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                    <!-- Loading state -->
+                    <tr id="loading-row">
+                        <td colspan="7" class="px-6 py-12 text-center">
+                            <div class="inline-flex items-center space-x-3 text-gray-500 dark:text-gray-400">
+                                <div class="w-5 h-5 spinner"></div>
+                                <span>Loading inventory...</span>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -97,4 +107,96 @@
         </div>
     </div>
 </div>
+
+<!-- Add Item Modal -->
+<div id="add-item-modal" class="fixed inset-0 z-50 hidden" x-data="{ show: false }">
+    <div class="flex items-center justify-center min-h-screen px-4 text-center">
+        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeAddItemModal()"></div>
+        
+        <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-slate-800 shadow-xl rounded-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add New Item</h3>
+                <button onclick="closeAddItemModal()" 
+                        class="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
+                </button>
+            </div>
+            
+            <form id="add-item-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Item ID *</label>
+                    <input type="text" id="item-id" name="id" required
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                           placeholder="e.g., ET999">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Item Name *</label>
+                    <input type="text" id="item-name" name="name" required
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                           placeholder="Equipment name">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                    <textarea id="item-description" name="description" rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                              placeholder="Item description"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Department *</label>
+                        <select id="item-department" name="department" required onchange="handleDepartmentChange()"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantity *</label>
+                        <input type="number" id="item-quantity" name="quantity" required min="1" value="1"
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Location *</label>
+                    <select id="item-location" name="location" required
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        <option value="">Select Location</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Supplier</label>
+                        <input type="text" id="item-supplier" name="supplier"
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                               placeholder="Supplier name">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Min Stock Level</label>
+                        <input type="number" id="min-stock-level" name="min_stock_level" min="1" value="1"
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    </div>
+                </div>
+            </form>
+            
+            <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
+                <button type="button" onclick="closeAddItemModal()"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    Cancel
+                </button>
+                <button type="button" onclick="addItem()"
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    Add Item
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}
