@@ -1,0 +1,1 @@
+"this is to inform you that the item [item name] from the department [department name] has been depleted and requires restocking of amount [amount_needed].

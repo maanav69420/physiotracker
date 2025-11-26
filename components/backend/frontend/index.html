@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PhysioTracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header><h1>PhysioTracker</h1></header>
+
+    <!-- role select -->
+    <section id="role-select" class="card">
+      <h2>Access as</h2>
+      <div class="btn-row">
+        <button id="btn-admin" class="btn primary">Admin</button>
+        <button id="btn-staff" class="btn secondary">Staff</button>
+      </div>
+    </section>
+
+    <!-- auth UI -->
+    <section id="auth-screen" class="card hidden">
+      <nav class="tabs">
+        <button id="tab-login" class="tab active">Login</button>
+        <button id="tab-register" class="tab">Register</button>
+      </nav>
+
+      <form id="form-login" class="form">
+        <h3 id="login-title">Login</h3>
+        <input id="login-email" type="email" placeholder="Email" required />
+        <input id="login-password" type="password" placeholder="Password" required />
+        <div class="form-row">
+          <button id="login-submit" class="btn primary">Login</button>
+          <button id="back-from-auth" type="button" class="btn link">Back</button>
+        </div>
+        <p id="login-msg" class="msg"></p>
+      </form>
+
+      <form id="form-register-admin" class="form hidden">
+        <h3>Admin Registration</h3>
+        <input id="reg-admin-name" type="text" placeholder="Name" required />
+        <input id="reg-admin-email" type="email" placeholder="Email" required />
+        <input id="reg-admin-password" type="password" placeholder="Password" required />
+        <div class="form-row">
+          <button id="reg-admin-submit" class="btn primary">Register</button>
+          <button id="reg-cancel" type="button" class="btn link">Cancel</button>
+        </div>
+        <p id="reg-admin-msg" class="msg"></p>
+      </form>
+
+      <form id="form-register-staff" class="form hidden">
+        <h3>Staff Registration</h3>
+        <input id="reg-staff-name" type="text" placeholder="Name" required />
+        <input id="reg-staff-dept" type="text" placeholder="Department" required />
+        <input id="reg-staff-email" type="email" placeholder="Email" required />
+        <input id="reg-staff-password" type="password" placeholder="Password" required />
+        <div class="form-row">
+          <button id="reg-staff-submit" class="btn primary">Register</button>
+          <button id="reg-staff-cancel" type="button" class="btn link">Cancel</button>
+        </div>
+        <p id="reg-staff-msg" class="msg"></p>
+      </form>
+    </section>
+
+    <!-- Admin dashboard -->
+    <section id="admin-dashboard" class="card hidden">
+      <div class="top-row">
+        <div>Logged in as: <span id="admin-email"></span></div>
+        <button id="admin-logout" class="btn link">Logout</button>
+      </div>
+
+      <h2>Admin Home</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Manage Departments</h3>
+          <ul id="dept-list" class="list"></ul>
+          <input id="dept-new" placeholder="New department" />
+          <button id="dept-add" class="btn">Add</button>
+        </div>
+
+        <div class="panel">
+          <h3>Manage Roles</h3>
+          <ul id="role-list" class="list"></ul>
+          <input id="role-new" placeholder="New role" />
+          <button id="role-add" class="btn">Add</button>
+        </div>
+
+        <div class="panel">
+          <h3>Manage Staff</h3>
+          <ul id="staff-list" class="list"></ul>
+          <label for="staff-select" class="muted">Select staff to manage</label>
+          <select id="staff-select"></select>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button id="staff-refresh" class="btn">Refresh</button>
+            <button id="staff-update-open" class="btn">Update Staff</button>
+            <button id="staff-remove" class="btn" style="background:#ff5c5c;color:#fff;border-color:#ff5c5c">Remove Staff</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Manage Items</h3>
+          <ul id="items-list" class="list"></ul>
+          <button id="items-refresh" class="btn">Refresh</button>
+        </div>
+
+        <div class="panel">
+          <h3>Item Reservation</h3>
+          <button id="show-depleted" class="btn">Show Depleted Items</button>
+          <ul id="depleted-list" class="list"></ul>
+        </div>
+
+        <div class="panel">
+          <h3>Import / Export</h3>
+          <div>
+            <label>Kind</label>
+            <select id="import-kind"><option>items</option><option>staff</option><option>roles</option><option>departments</option></select>
+            <input id="import-file" type="file" />
+            <button id="btn-import" class="btn">Import CSV</button>
+          </div>
+          <div style="margin-top:8px">
+            <label>Export</label>
+            <select id="export-kind"><option>items</option><option>staff</option><option>roles</option><option>departments</option></select>
+            <button id="btn-export" class="btn">Export</button>
+            <a id="export-link" class="muted" href="#" target="_blank" style="display:none">Download</a>
+          </div>
+        </div>
+      </div>
+
+      <p id="admin-msg" class="msg"></p>
+    </section>
+
+    <!-- Staff dashboard -->
+    <section id="staff-dashboard" class="card hidden">
+      <div class="top-row">
+        <div>Logged in as: <span id="staff-email"></span> (<span id="staff-dept"></span>)</div>
+        <button id="staff-logout" class="btn link">Logout</button>
+      </div>
+
+      <h2>Staff Home</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Add Item</h3>
+          <input id="s-item-name" placeholder="Name" />
+          <label for="s-item-type" class="muted" style="margin-top:6px">Type</label>
+          <select id="s-item-type">
+            <option value="consumable">Consumable</option>
+            <option value="non-consumable">Non-consumable</option>
+          </select>
+          <input id="s-item-amount" type="number" placeholder="Amount needed" />
+          <button id="s-item-add" class="btn">Add</button>
+        </div>
+
+        <div class="panel">
+          <h3>Item Utilized</h3>
+          <ul id="s-items-list" class="list"></ul>
+        </div>
+
+        <div class="panel">
+          <h3>Remove Item</h3>
+          <input id="s-remove-id" type="number" placeholder="Item ID" />
+          <button id="s-remove" class="btn">Remove</button>
+        </div>
+
+        <div class="panel">
+          <h3>Refill Item</h3>
+          <input id="s-refill-id" type="number" placeholder="Item ID" />
+          <button id="s-refill" class="btn">Refill</button>
+        </div>
+
+        <!-- New: Reserve Item -->
+        <div class="panel">
+          <h3>Reserve Item</h3>
+          <button id="staff-reserve-open" class="btn">Reserve Item</button>
+          <p id="staff-reserve-status" class="msg"></p>
+        </div>
+      </div>
+
+      <p id="staff-msg" class="msg"></p>
+    </section>
+
+    <!-- New: Staff reservation form (hidden) -->
+    <section id="staff-reserve-form" class="card hidden" style="max-width:520px;margin:auto;">
+      <div class="top-row">
+        <div>Reserve Item</div>
+        <button id="staff-reserve-cancel" class="btn link">Cancel</button>
+      </div>
+      <form class="form" id="form-staff-reserve">
+        <label class="muted">Select item</label>
+        <select id="staff-reserve-select"></select>
+
+        <label class="muted">Estimated daily usage (units/day)</label>
+        <input id="staff-reserve-daily" type="number" min="1" placeholder="e.g. 2" />
+
+        <label class="muted">Target amount needed</label>
+        <input id="staff-reserve-target" type="number" min="0" placeholder="leave empty to use amount_needed" />
+
+        <div class="form-row">
+          <button id="staff-reserve-submit" class="btn primary">Create Reservation</button>
+        </div>
+        <p id="staff-reserve-msg" class="msg"></p>
+      </form>
+    </section>
+
+    <!-- Staff edit page (admin) -->
+    <section id="staff-edit" class="card hidden">
+      <div class="top-row">
+        <div>Edit Staff</div>
+        <button id="staff-edit-cancel" class="btn link">Cancel</button>
+      </div>
+      <form id="staff-edit-form" class="form">
+        <label class="muted">Current email (original)</label>
+        <input id="staff-edit-old-email" readonly />
+        <label class="muted">Name</label>
+        <input id="staff-edit-name" />
+        <label class="muted">Department</label>
+        <input id="staff-edit-dept" />
+        <label class="muted">Email (to change)</label>
+        <input id="staff-edit-email" />
+        <label class="muted">Password</label>
+        <input id="staff-edit-password" />
+        <div class="form-row">
+          <button id="staff-edit-save" class="btn primary">Save</button>
+        </div>
+        <p id="staff-edit-msg" class="msg"></p>
+      </form>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
